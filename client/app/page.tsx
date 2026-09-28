@@ -9,8 +9,9 @@ import { PhotoTour } from "@/components/PhotoTour";
 import { Lightbox } from "@/components/Lightbox";
 import { Footer } from "@/components/Footer";
 import { initialListings, Listing } from "@/data/listings";
+import { UIProvider, useUI } from "@/context/UIContext";
 
-export default function Home() {
+function HomeContent() {
   const [activeTab, setActiveTab] = useState<"homes" | "experiences" | "services">("homes");
   const [selectedListing, setSelectedListing] = useState<Listing | null>(null);
   const [isPhotoTourOpen, setIsPhotoTourOpen] = useState(false);
@@ -22,6 +23,8 @@ export default function Home() {
     guests: number;
     dates: string;
   } | null>(null);
+
+  const { showToast, openWishlistModal } = useUI();
 
   // Initialize wishlist from localStorage
   useEffect(() => {
@@ -39,7 +42,8 @@ export default function Home() {
 
   const handleToggleWishlist = (listingId: number) => {
     setWishlist((prev) => {
-      const updated = prev.includes(listingId)
+      const isRemoving = prev.includes(listingId);
+      const updated = isRemoving
         ? prev.filter((id) => id !== listingId)
         : [...prev, listingId];
       try {
@@ -47,6 +51,10 @@ export default function Home() {
       } catch (e) {
         console.error(e);
       }
+      showToast(
+        isRemoving ? "Removed from your wishlist" : "Saved to your wishlist!",
+        "heart"
+      );
       return updated;
     });
   };
@@ -57,7 +65,8 @@ export default function Home() {
       return null;
     }
     return initialListings.filter((item) => {
-      const matchDest = !searchFilter.destination ||
+      const matchDest =
+        !searchFilter.destination ||
         item.location.toLowerCase().includes(searchFilter.destination.toLowerCase()) ||
         item.title.toLowerCase().includes(searchFilter.destination.toLowerCase());
       const matchGuests = searchFilter.guests === 0 || item.guests >= searchFilter.guests;
@@ -101,14 +110,12 @@ export default function Home() {
         onTabChange={(tab) => {
           setActiveTab(tab);
           if (tab !== "homes") {
-            alert(`Switched to ${tab} tab! Showing curated ${tab}.`);
+            showToast(`Switched to ${tab} tab! Showing curated ${tab}.`, "airbnb");
           }
         }}
         onHomeClick={handleGoHome}
         wishlistCount={wishlist.length}
-        onOpenWishlist={() => {
-          alert(`You have ${wishlist.length} saved home${wishlist.length === 1 ? "" : "s"} in your wishlist!`);
-        }}
+        onOpenWishlist={openWishlistModal}
       />
 
       {/* Main Content Area */}
@@ -202,5 +209,43 @@ export default function Home() {
       {/* Footer */}
       <Footer />
     </div>
+  );
+}
+
+export default function Home() {
+  const [wishlist, setWishlist] = useState<number[]>([1, 2]);
+
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem("airbnb_wishlist");
+      if (saved) {
+        setWishlist(JSON.parse(saved));
+      }
+    } catch {
+      // ignore
+    }
+  }, []);
+
+  const wishlistListings = useMemo(() => {
+    return initialListings.filter((l) => wishlist.includes(l.id));
+  }, [wishlist]);
+
+  const handleRemoveFromWishlist = (id: number) => {
+    const updated = wishlist.filter((item) => item !== id);
+    setWishlist(updated);
+    try {
+      localStorage.setItem("airbnb_wishlist", JSON.stringify(updated));
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  return (
+    <UIProvider
+      wishlistListings={wishlistListings}
+      onRemoveFromWishlist={handleRemoveFromWishlist}
+    >
+      <HomeContent />
+    </UIProvider>
   );
 }

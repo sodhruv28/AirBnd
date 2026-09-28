@@ -19,6 +19,7 @@ import {
   Calendar,
 } from "lucide-react";
 import { Listing } from "@/data/listings";
+import { useUI } from "@/context/UIContext";
 
 interface ListingDetailProps {
   listing: Listing;
@@ -38,6 +39,7 @@ export const ListingDetail: React.FC<ListingDetailProps> = ({
   onToggleWishlist,
 }) => {
   const [activeSubTab, setActiveSubTab] = useState<"photos" | "amenities" | "reviews" | "location">("photos");
+  const { showToast, openReservationModal } = useUI();
 
   const images = listing.images && listing.images.length >= 5
     ? listing.images
@@ -54,9 +56,10 @@ export const ListingDetail: React.FC<ListingDetailProps> = ({
       navigator.share({ title: listing.title, url: window.location.href });
     } else {
       navigator.clipboard.writeText(window.location.href);
-      alert("Listing URL copied to clipboard!");
+      showToast("Listing URL copied to clipboard!", "success", "Share Link");
     }
   };
+
 
   const scrollToSection = (id: string, tab: typeof activeSubTab) => {
     setActiveSubTab(tab);
@@ -255,11 +258,19 @@ export const ListingDetail: React.FC<ListingDetailProps> = ({
               </div>
             </div>
             <button
-              onClick={() => alert(`Reservation confirmed for ${listing.title}!`)}
+              onClick={() =>
+                openReservationModal({
+                  listing,
+                  dates: "7 Jul - 9 Jul 2026",
+                  guests: 2,
+                  totalPrice: listing.price * 2 + 1200,
+                })
+              }
               className="bg-[#FF385C] hover:bg-[#E00B41] text-white text-sm font-semibold px-6 py-2.5 rounded-xl shadow-md transition-all hover:scale-105 active:scale-95 cursor-pointer"
             >
               Reserve
             </button>
+
           </div>
         </div>
       </div>
@@ -467,12 +478,20 @@ export const ListingDetail: React.FC<ListingDetailProps> = ({
 
             {/* Reserve Button */}
             <button
-              onClick={() => alert(`Reservation booked for ₹${(listing.price * 2 + 1200).toLocaleString("en-IN")}!`)}
+              onClick={() =>
+                openReservationModal({
+                  listing,
+                  dates: "7 Jul - 9 Jul 2026",
+                  guests: 2,
+                  totalPrice: listing.price * 2 + 1200,
+                })
+              }
               className="w-full bg-[#FF385C] hover:bg-[#E00B41] active:scale-98 text-white font-semibold py-3.5 rounded-xl transition-all duration-200 shadow-md cursor-pointer text-center text-[15px]"
               id="reserve-card-btn"
             >
               Reserve
             </button>
+
 
             <p className="text-center text-xs text-[#717171]">
               You won&apos;t be charged yet

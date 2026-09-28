@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useState } from "react";
-import { Globe, Menu, User, Sparkles } from "lucide-react";
+import { Globe, Menu, User } from "lucide-react";
+import { useUI } from "@/context/UIContext";
 
 interface NavbarProps {
   activeTab: "homes" | "experiences" | "services";
@@ -20,6 +21,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [showLanguageModal, setShowLanguageModal] = useState(false);
+  const { openAuthModal, openHostModal, openWishlistModal, openHelpModal, showToast } = useUI();
 
   return (
     <>
@@ -28,21 +30,15 @@ export const Navbar: React.FC<NavbarProps> = ({
           {/* Logo */}
           <div
             onClick={onHomeClick}
-            className="flex items-center gap-2 cursor-pointer select-none group"
+            className="flex items-center cursor-pointer select-none group"
             id="airbnb-logo-btn"
           >
-            <svg
-              className="w-8 h-8 fill-[#FF385C] transition-transform duration-200 group-hover:scale-105"
-              viewBox="0 0 32 32"
-              xmlns="http://www.w3.org/2000/svg"
-              aria-hidden="true"
-              role="presentation"
-            >
-              <path d="M16 1c2.008 0 3.463.963 4.751 3.269l.533 1.025c1.954 3.83 6.114 12.54 7.1 14.836l.145.353c.667 1.591.91 2.472.96 3.396l.011.315c0 4.77-3.69 8.806-8.5 8.806-3.238 0-6.107-1.848-7.5-4.63-1.393 2.782-4.262 4.63-7.5 4.63-4.81 0-8.5-4.036-8.5-8.806 0-1.28.324-2.529.971-3.711l.145-.353c.986-2.296 5.146-11.006 7.1-14.836l.533-1.025C8.537 1.963 9.992 1 12 1zm0 2c-1.343 0-2.385.665-3.418 2.508l-.51 1.005C10.158 10.287 6.028 18.94 5.068 21.2l-.128.312C4.428 22.536 4.148 23.513 4.148 24.5c0 3.655 2.757 6.806 6.352 6.806 2.668 0 5.076-1.748 6.012-4.375l.488-1.376.488 1.376c.936 2.627 3.344 4.375 6.012 4.375 3.595 0 6.352-3.151 6.352-6.806 0-.987-.28-1.964-.792-2.988l-.128-.312c-.96-2.26-5.09-10.913-7.004-14.687l-.51-1.005C20.385 3.665 19.343 3 18 3zm0 13c1.657 0 3 1.343 3 3s-1.343 3-3 3-3-1.343-3-3 1.343-3 3-3z" />
-            </svg>
-            <span className="text-[#FF385C] font-bold text-xl tracking-tight hidden sm:inline-block">
-              airbnb
-            </span>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/airbnb-logo.png"
+              alt="Airbnb"
+              className="h-8 w-auto object-contain transition-transform duration-200 group-hover:scale-105"
+            />
           </div>
 
           {/* Navigation Tabs */}
@@ -112,7 +108,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           {/* Right Action Menu */}
           <div className="flex items-center gap-2">
             <button
-              onClick={() => alert("Become a host modal / onboarding")}
+              onClick={openHostModal}
               className="hidden md:inline-flex items-center text-sm font-medium text-[#222222] hover:bg-[#F7F7F7] px-3.5 py-2.5 rounded-full transition-colors cursor-pointer"
             >
               Become a host
@@ -149,7 +145,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                   <button
                     onClick={() => {
                       setIsMenuOpen(false);
-                      alert("Sign up modal");
+                      openAuthModal("signup");
                     }}
                     className="w-full text-left px-4 py-3 text-sm font-semibold hover:bg-[#F7F7F7] text-[#222222] transition-colors"
                   >
@@ -158,33 +154,32 @@ export const Navbar: React.FC<NavbarProps> = ({
                   <button
                     onClick={() => {
                       setIsMenuOpen(false);
-                      alert("Log in modal");
+                      openAuthModal("login");
                     }}
                     className="w-full text-left px-4 py-3 text-sm hover:bg-[#F7F7F7] text-[#222222] transition-colors"
                   >
                     Log in
                   </button>
-                  {onOpenWishlist && (
-                    <button
-                      onClick={() => {
-                        setIsMenuOpen(false);
-                        onOpenWishlist();
-                      }}
-                      className="w-full text-left px-4 py-3 text-sm hover:bg-[#F7F7F7] text-[#222222] transition-colors flex items-center justify-between"
-                    >
-                      <span>Wishlist</span>
-                      {wishlistCount > 0 && (
-                        <span className="text-xs bg-[#FF385C] text-white font-bold px-2 py-0.5 rounded-full">
-                          {wishlistCount}
-                        </span>
-                      )}
-                    </button>
-                  )}
+                  <button
+                    onClick={() => {
+                      setIsMenuOpen(false);
+                      if (onOpenWishlist) onOpenWishlist();
+                      else openWishlistModal();
+                    }}
+                    className="w-full text-left px-4 py-3 text-sm hover:bg-[#F7F7F7] text-[#222222] transition-colors flex items-center justify-between"
+                  >
+                    <span>Wishlist</span>
+                    {wishlistCount > 0 && (
+                      <span className="text-xs bg-[#FF385C] text-white font-bold px-2 py-0.5 rounded-full">
+                        {wishlistCount}
+                      </span>
+                    )}
+                  </button>
                   <div className="h-[1px] bg-[#EBEBEB] my-2" />
                   <button
                     onClick={() => {
                       setIsMenuOpen(false);
-                      alert("Airbnb your home");
+                      openHostModal();
                     }}
                     className="w-full text-left px-4 py-3 text-sm hover:bg-[#F7F7F7] text-[#222222] transition-colors"
                   >
@@ -193,7 +188,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                   <button
                     onClick={() => {
                       setIsMenuOpen(false);
-                      alert("Host an experience");
+                      showToast("Host an Experience setup launched!", "airbnb");
                     }}
                     className="w-full text-left px-4 py-3 text-sm hover:bg-[#F7F7F7] text-[#222222] transition-colors"
                   >
@@ -202,7 +197,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                   <button
                     onClick={() => {
                       setIsMenuOpen(false);
-                      alert("Help Centre");
+                      openHelpModal();
                     }}
                     className="w-full text-left px-4 py-3 text-sm hover:bg-[#F7F7F7] text-[#222222] transition-colors"
                   >

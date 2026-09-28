@@ -4,6 +4,7 @@ import React, { useEffect, useRef } from "react";
 import { ChevronLeft, Share2, Heart } from "lucide-react";
 import { photoTourSections, TourSection, LightboxPhoto, lightboxPhotos } from "@/data/photoTour";
 import { useKeyboard } from "@/hooks/useKeyboard";
+import { useUI } from "@/context/UIContext";
 
 interface PhotoTourProps {
   isOpen: boolean;
@@ -23,6 +24,7 @@ export const PhotoTour: React.FC<PhotoTourProps> = ({
   onToggleWishlist,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
+  const { showToast } = useUI();
 
   // Keyboard navigation: Escape closes the Photo Tour
   useKeyboard(
@@ -83,8 +85,9 @@ export const PhotoTour: React.FC<PhotoTourProps> = ({
                 navigator.share({ title: propertyTitle, url: window.location.href });
               } else {
                 navigator.clipboard.writeText(window.location.href);
-                alert("Link copied to clipboard!");
+                showToast("Photo tour link copied to clipboard!", "success", "Share Tour");
               }
+
             }}
             className="flex items-center gap-2 text-sm font-semibold text-[#222222] hover:bg-[#F7F7F7] px-3.5 py-2 rounded-lg transition-colors cursor-pointer underline"
           >
