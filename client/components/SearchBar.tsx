@@ -57,77 +57,78 @@ export const SearchBar: React.FC<SearchBarProps> = ({
   };
 
   return (
-    <div className="w-full flex justify-center py-4 px-4 sm:px-6 relative z-30" ref={containerRef}>
+    <div className="w-full flex justify-center py-2 sm:py-4 px-3 sm:px-6 relative z-30" ref={containerRef}>
       <div className="relative inline-flex items-center bg-white border border-[#DDDDDD] rounded-full shadow-[0_3px_12px_rgba(0,0,0,0.08)] hover:shadow-[0_6px_20px_rgba(0,0,0,0.12)] transition-all duration-300 max-w-3xl w-full">
         {/* Where Section */}
         <div
           onClick={() => setActiveDropdown(activeDropdown === "where" ? null : "where")}
-          className={`flex-1 px-6 py-2.5 rounded-full cursor-pointer transition-colors duration-200 ${
+          className={`flex-1 px-3.5 sm:px-6 py-2 sm:py-2.5 rounded-full cursor-pointer transition-colors duration-200 ${
             activeDropdown === "where" ? "bg-[#EBEBEB] shadow-inner" : "hover:bg-[#F7F7F7]"
           }`}
           id="search-where-pill"
         >
-          <div className="text-xs font-bold text-[#222222] tracking-tight">Where</div>
-          <div className="text-sm text-[#717171] truncate font-normal">
+          <div className="text-[11px] sm:text-xs font-bold text-[#222222] tracking-tight">Where</div>
+          <div className="text-xs sm:text-sm text-[#717171] truncate font-normal">
             {destination || "Search destinations"}
           </div>
         </div>
 
-        <div className="h-8 w-[1px] bg-[#DDDDDD] self-center" />
+        <div className="h-6 sm:h-8 w-[1px] bg-[#DDDDDD] self-center" />
 
         {/* When Section */}
         <div
           onClick={() => setActiveDropdown(activeDropdown === "when" ? null : "when")}
-          className={`px-6 py-2.5 rounded-full cursor-pointer transition-colors duration-200 hidden sm:block ${
+          className={`px-4 sm:px-6 py-2 sm:py-2.5 rounded-full cursor-pointer transition-colors duration-200 hidden sm:block ${
             activeDropdown === "when" ? "bg-[#EBEBEB] shadow-inner" : "hover:bg-[#F7F7F7]"
           }`}
           id="search-when-pill"
         >
-          <div className="text-xs font-bold text-[#222222] tracking-tight">When</div>
-          <div className="text-sm text-[#222222] font-normal truncate">{dates}</div>
+          <div className="text-[11px] sm:text-xs font-bold text-[#222222] tracking-tight">When</div>
+          <div className="text-xs sm:text-sm text-[#222222] font-normal truncate">{dates}</div>
         </div>
 
-        <div className="h-8 w-[1px] bg-[#DDDDDD] self-center hidden sm:block" />
+        <div className="h-6 sm:h-8 w-[1px] bg-[#DDDDDD] self-center hidden sm:block" />
 
         {/* Who Section */}
         <div
           onClick={() => setActiveDropdown(activeDropdown === "who" ? null : "who")}
-          className={`flex-1 px-6 py-2.5 rounded-full cursor-pointer transition-colors duration-200 ${
+          className={`flex-1 px-3.5 sm:px-6 py-2 sm:py-2.5 rounded-full cursor-pointer transition-colors duration-200 ${
             activeDropdown === "who" ? "bg-[#EBEBEB] shadow-inner" : "hover:bg-[#F7F7F7]"
           }`}
           id="search-who-pill"
         >
-          <div className="text-xs font-bold text-[#222222] tracking-tight">Who</div>
-          <div className="text-sm text-[#717171] truncate font-normal">
+          <div className="text-[11px] sm:text-xs font-bold text-[#222222] tracking-tight">Who</div>
+          <div className="text-xs sm:text-sm text-[#717171] truncate font-normal">
             {guests > 0 ? `${guests} guest${guests > 1 ? "s" : ""}` : "Add guests"}
           </div>
         </div>
 
         {/* Action Button: Search or Clear */}
-        <div className="pr-2 flex items-center gap-1">
+        <div className="pr-1.5 sm:pr-2 flex items-center gap-1">
           {isFiltered && (
             <button
               onClick={handleReset}
-              className="p-2 hover:bg-[#F7F7F7] rounded-full text-[#717171] hover:text-[#222222] transition-colors"
+              className="p-1.5 sm:p-2 hover:bg-[#F7F7F7] rounded-full text-[#717171] hover:text-[#222222] transition-colors"
               title="Clear search"
             >
-              <X className="w-4 h-4" />
+              <X className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             </button>
           )}
 
           <button
             onClick={handleTriggerSearch}
-            className="w-12 h-12 bg-[#FF385C] hover:bg-[#E00B41] active:scale-95 text-white rounded-full flex items-center justify-center transition-all duration-200 shadow-md cursor-pointer ml-1"
+            className="w-9 h-9 sm:w-12 sm:h-12 bg-[#FF385C] hover:bg-[#E00B41] active:scale-95 text-white rounded-full flex items-center justify-center transition-all duration-200 shadow-md cursor-pointer ml-1 shrink-0"
             title="Search"
             id="search-submit-btn"
           >
-            <Search className="w-4 h-4 stroke-[3]" />
+            <Search className="w-3.5 h-3.5 sm:w-4 sm:h-4 stroke-[3]" />
           </button>
         </div>
 
         {/* Dropdown: Where */}
         {activeDropdown === "where" && (
-          <div className="absolute top-[110%] left-0 w-full sm:w-[420px] bg-white border border-[#EBEBEB] rounded-3xl shadow-[0_8px_28px_rgba(0,0,0,0.18)] p-6 z-50 animate-zoom-in">
+          <div className="absolute top-[110%] left-0 w-full sm:w-[420px] bg-white border border-[#EBEBEB] rounded-3xl shadow-[0_8px_28px_rgba(0,0,0,0.18)] p-4 sm:p-6 z-50 animate-zoom-in">
+
             <h3 className="text-xs font-bold uppercase tracking-wider text-[#717171] mb-3">
               Search by destination
             </h3>
